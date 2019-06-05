@@ -2,7 +2,7 @@
 __author__ = "Rodrigo Delgado"
 
 import rospy
-import os, rospkg
+import os, rospkg, sys
 import smach
 from smach.user_data import UserData
 import smach_ros
@@ -108,6 +108,8 @@ class Fuzzer():
         log["time"] = str(end-start)
         return log
 
+    def fuzz_params(self):
+
 
 GRAMMAR = {
         "<start>":["{<userdata>}"],
@@ -203,7 +205,10 @@ if __name__ == "__main__":
     config_path = os.path.join(rp.get_path("uchile_states"), "src", "uchile_states", "test", "fuzzing", "configuration", "config.json")
     report_path = os.path.join(rp.get_path("uchile_states"), "src", "uchile_states", "test", "fuzzing", "report")
     dirName = "report_" + str(datetime.now())
-    report_path = os.path.join(report_path, dirName)
+    if len(sys.argv) > 1:
+        report_path = sys.argv[1]
+    else:
+        report_path = os.path.join(rp.get_path("uchile_states"), "src", "uchile_states", "test", "fuzzing", "report")
     if not os.path.exists(report_path):
         os.makedirs(report_path)
         print("Directory " , dirName ,  " Created ") 
