@@ -97,6 +97,7 @@ class Fuzzer():
     def run_with_save_data(self, state, label):
         log = {}
         data, log["input_data"] = self.userdata_from_set(state._input_keys, state=label)
+        log["params"] = self.fuzz_params()
         start = time.time()
         try:
             log["output"] = state.execute(data)
@@ -108,6 +109,25 @@ class Fuzzer():
         log["time"] = str(end-start)
         return log
 
+    def fuzz_params(self):
+        self.fuzz_param('reached', ('y','n'))
+        self.fuzz_param('is_moving', ('n','y'))
+        self.fuzz_param('hear', self.simple_grammar_fuzzer(GRAMMAR,"<string_array>"))
+        self.fuzz_param('num_faces', self.simple_grammar_fuzzer(GRAMMAR,"<int_array>"))
+        self.fuzz_param('moved', ('y','n'))
+        self.fuzz_param('detected_faces', ('y','n'))
+        self.fuzz_param('saved_faces', ('y','n'))
+        self.fuzz_param('recognized_faces', ('y','n'))
+        map(lambda x: (x,rospy.get_param(x)),rospy.get_param_names())
+        #rospy.set_param('recognized_name','test_name')
+        #rospy.set_param('is_door_open','y')
+        #rospy.set_param('is_object_detected','y')
+        #rospy.set_param('object_detected','y')
+
+    def fuzz_param(self, param, values):
+        rospy.set_param(param, random.choice(values))
+
+
 GRAMMAR = {
         "<start>":["{<userdata>}"],
         "<userdata>":["<vars>,<userdata>","<vars>"],
@@ -116,6 +136,7 @@ GRAMMAR = {
         "<array>": ["<string_array>","<number_array>","<boolean_array>"],
         "<string_array>": ["[<string_elements>]"],
         "<number_array>": ["[<number_elements>]"],
+        "<int_array>": ["[<int_elements>]"],
         "<boolean_array>": ["[<boolean_elements>"],
         "<string_elements>": ["<string>,<string_elements>","<string>"],
         "<number_elements>": ["<int_elements>","<float_elements>","<mixed_elements>"],
