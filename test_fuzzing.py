@@ -108,9 +108,6 @@ class Fuzzer():
         log["time"] = str(end-start)
         return log
 
-    def fuzz_params(self):
-
-
 GRAMMAR = {
         "<start>":["{<userdata>}"],
         "<userdata>":["<vars>,<userdata>","<vars>"],
