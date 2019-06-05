@@ -118,7 +118,7 @@ class Fuzzer():
         self.fuzz_param('detected_faces', ('y','n'))
         self.fuzz_param('saved_faces', ('y','n'))
         self.fuzz_param('recognized_faces', ('y','n'))
-        map(lambda x: (x,rospy.get_param(x)),rospy.get_param_names())
+        return map(lambda x: (x,rospy.get_param(x)),rospy.get_param_names())
         #rospy.set_param('recognized_name','test_name')
         #rospy.set_param('is_door_open','y')
         #rospy.set_param('is_object_detected','y')
@@ -221,8 +221,7 @@ if __name__ == "__main__":
     rospy.init_node('test')
     rp = rospkg.RosPack()
     config_path = os.path.join(rp.get_path("uchile_states"), "src", "uchile_states", "test", "fuzzing", "configuration", "config.json")
-    report_path = os.path.join(rp.get_path("uchile_states"), "src", "uchile_states", "test", "fuzzing", "report")
-    dirName = "report_" + str(datetime.now())
+    dirName = str(datetime.now())
     if len(sys.argv) > 1:
         report_path = sys.argv[1]
     else:
@@ -251,7 +250,7 @@ if __name__ == "__main__":
                 if not  os.path.exists(os.path.join(report_path, label)):
                     os.makedirs(os.path.join(report_path, label))
                 log = fuzzer.run_with_save_data(state, label)
-                with open(os.path.join(report_path, label, "report.json"), 'a+') as outfile:  
+                with open(os.path.join(report_path, label, dirName + "_report.json"), 'a+') as outfile:  
                     json.dump(log, outfile)
                     outfile.write("\n")
                 
