@@ -261,7 +261,7 @@ if __name__ == "__main__":
         for label in states:
             rospy.loginfo('starting with state: ' + label)
             state = states[label]
-            for i in range(10):
+            for i in range(20):
                 if not  os.path.exists(os.path.join(report_path, label)):
                     os.makedirs(os.path.join(report_path, label))
                 log = fuzzer.run_with_save_data(state, label)
