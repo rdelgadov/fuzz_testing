@@ -135,7 +135,7 @@ class Fuzzer():
     def fuzz_ros_params(self):
         while True:
             self.fuzz_params()
-            time.sleep(3)
+            time.sleep(1)
 
     def start_fuzzing_params(self):
         worker = Thread(target=self.fuzz_ros_params)
