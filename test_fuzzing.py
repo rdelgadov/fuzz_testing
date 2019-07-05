@@ -11,6 +11,7 @@ import random
 import re
 import json, ast
 import time
+from threading import Thread
 from datetime import datetime
 from semu_skills import robot_factory
 from uchile_robocup.Tour_Guide import TourGuide
@@ -97,7 +98,7 @@ class Fuzzer():
     def run_with_save_data(self, state, label):
         log = {}
         data, log["input_data"] = self.userdata_from_set(state._input_keys, state=label)
-        log["params"] = self.fuzz_params()
+        log["pre_params"] = self.get_params()
         start = time.time()
         try:
             log["output"] = state.execute(data)
@@ -106,6 +107,7 @@ class Fuzzer():
             rospy.loginfo(data)
             rospy.logerr('error: ' + e.message)
         end = time.time()
+        log["post_params"] = self.get_params()
         log["time"] = str(end-start)
         return log
 
@@ -127,6 +129,18 @@ class Fuzzer():
     def fuzz_param(self, param, values):
         rospy.set_param(param, random.choice(values))
 
+    def get_params(self):
+        return map(lambda x: (x,rospy.get_param(x)),rospy.get_param_names())
+
+    def fuzz_ros_params(self):
+        while True:
+            self.fuzz_params()
+            time.sleep(3)
+
+    def start_fuzzing_params(self):
+        worker = Thread(target=self.fuzz_ros_params)
+        worker.setDaemon(True)
+        worker.start()
 
 GRAMMAR = {
         "<start>":["{<userdata>}"],
@@ -242,6 +256,7 @@ if __name__ == "__main__":
     #sm6 = take_orders.getInstance(robot)
     #machines = [sm._states, sm2._states, sm3._states, sm4._states, sm5._states, sm6._states ]
     machines = [sm._states]
+    fuzzer.start_fuzzing_params()
     for states in machines:
         for label in states:
             rospy.loginfo('starting with state: ' + label)
