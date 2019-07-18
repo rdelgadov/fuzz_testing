@@ -16,6 +16,7 @@ from datetime import datetime
 from semu_skills import robot_factory
 from uchile_robocup.Tour_Guide import TourGuide
 from uchile_robocup.CocktailParty import cocktail_party
+from uchile_robocup.FindMyMates import init
 
 CHARACTERS = (string.ascii_lowercase
                             + ' ')
@@ -249,13 +250,15 @@ if __name__ == "__main__":
     fuzzer = Fuzzer(config)
     robot = robot_factory.build(base_skills + core + tools + perception)
     sm = TourGuide.getInstance(robot)
+    sm2 = init.getInstance(robot)
+    sm3 = cocktail_party.getInstance(robot)
     #sm3 = correct_order.getInstance(robot)
     #sm2 = init.getInstance(robot)
     #sm4 = place_corrected_order.getInstance(robot)
     #sm5 = place_orders.getInstance(robot)
     #sm6 = take_orders.getInstance(robot)
     #machines = [sm._states, sm2._states, sm3._states, sm4._states, sm5._states, sm6._states ]
-    machines = [sm._states]
+    machines = [sm._states, sm2._states, sm3._states]
     fuzzer.start_fuzzing_params()
     for states in machines:
         for label in states:
