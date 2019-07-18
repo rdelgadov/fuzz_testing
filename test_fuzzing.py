@@ -114,7 +114,7 @@ class Fuzzer():
     def fuzz_params(self):
         self.fuzz_param('reached', ('y','n'))
         self.fuzz_param('is_moving', ('n','y'))
-        self.fuzz_param('hear', self.simple_grammar_fuzzer(GRAMMAR,"<string_array>"))
+        self.fuzz_param('hear', ('yes','no','algo'))
         self.fuzz_param('num_faces', self.simple_grammar_fuzzer(GRAMMAR,"<int_array>"))
         self.fuzz_param('moved', ('y','n'))
         self.fuzz_param('detected_faces', ('y','n'))
