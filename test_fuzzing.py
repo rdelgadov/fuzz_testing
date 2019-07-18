@@ -247,7 +247,7 @@ if __name__ == "__main__":
     with open(config_path) as f:
         config = json.load(f)
     fuzzer = Fuzzer(config)
-    robot = robot_factory.build(base_skills + core + tools)
+    robot = robot_factory.build(base_skills + core + tools + perception)
     sm = TourGuide.getInstance(robot)
     #sm3 = correct_order.getInstance(robot)
     #sm2 = init.getInstance(robot)
