@@ -1,61 +1,250 @@
 {
-	"FIND_PERSON":{
-		"keys":["look_list"],
-		"types":["<array>"],
-		"grammar":{
-			"<array>":["[<elements>]"],
-			"<elements>":["<element>,<elements>","<element>"],
-			"<element>":["front", "failed", "right", "left"]
-		}
-	},
-	"FIND_BARMAN":{
-		"keys":["look_list"],
-		"types":["<array>"],
-		"grammar":{
-			"<array>":["[<elements>]"],
-			"<elements>":["<element>,<elements>","<element>"],
-			"<element>":["'front'", "'failed'", "'right'", "'left'"]
-		}
-	},
-	"ASK_TO_SEAT":{
-		"keys":["input_text"],
-		"types":["<string>"]
-	},
-	"GREAT":{
-		"keys":["input_text"],
-		"types":["<string>"]
-	},
-	"ASK_GUIDE":{
-		"keys":["confirmation_text"],
-		"types":["<string>"]
-	},
-	"ROBOCUP_INFORMATION_2":{
-		"keys":["input_text"],
-		"types":["<string>"]
-	},
-	"ROBOCUP_INFORMATION":{
-		"keys":["input_text"],
-		"types":["<string>"]
-	},
-	"THANKS":{
-		"keys":["input_text"],
-		"types":["<string>"]
-	},
-	"ANNOUNCE_NAV":{
-		"keys":["input_text"],
-		"types":["<string>"]
-	},
-	"WAIT_DOOR_TO_OPEN":{
-		"keys":["timeout"],
-		"types":["<int>"]
-	},
-	"COMPARE_NAMES":{
-		"keys":["missing_order","avalaible_drinks","face_recognize_info"],
-		"types":["<order_array>","<avalaible_drinks>","<start>"],
-		"grammar":{
-			"<start>":["<order_array>","<avalaible_drinks>"],
-			"<order_array>":[1,2,3,4],
-			"<avalaible_drinks>":["coca","bilz","pap","pepsi"]
-		}
-	}
+  "ROTATESTATE":{
+    "params": {
+      "keys":["moved"],
+      "types":["<yn>"],
+      "grammar":{
+        "<yn>": ["y","n"]
+      }
+    },
+    "data":{
+      "keys":[
+        "angle"
+      ],
+      "types":[
+        "<float>"
+      ]
+    }
+  },
+
+  "MOVESTATE":{
+    "params": {
+      "keys":["moved"],
+      "types":["<yn>"],
+      "grammar":{
+        "<yn>": ["y","n"]
+      }
+    },
+    "data":{
+      "keys":[
+        "distance"
+      ],
+      "types":[
+        "<float>"
+      ]
+    }
+  },
+
+
+  "MOVEFORWARD":{
+    "params": {
+      "keys":["moved"],
+      "types":["<yn>"],
+      "grammar":{
+        "<yn>": ["y","n"]
+      }
+    },
+    "data":{
+      "keys":[
+        "distance"
+      ],
+      "types":[
+        "<float>"
+      ]
+    }
+  },
+  "FIND_PERSON": {
+    "params": {},
+    "data": {
+      "keys": [
+        "look_list"
+      ],
+      "types": [
+        "<array>"
+      ],
+      "grammar": {
+        "<array>": [
+          "[<elements>]"
+        ],
+        "<elements>": [
+          "<element>,<elements>",
+          "<element>"
+        ],
+        "<element>": [
+          "'front'",
+          "'failed'",
+          "'right'",
+          "'left'"
+        ]
+      }
+    }
+  },
+  "FIND_BARMAN": {
+    "params": {},
+    "data": {
+      "keys": [
+        "look_list"
+      ],
+      "types": [
+        "<array>"
+      ],
+      "grammar": {
+        "<array>": [
+          "[<elements>]"
+        ],
+        "<elements>": [
+          "<element>,<elements>",
+          "<element>"
+        ],
+        "<element>": [
+          "'front'",
+          "'failed'",
+          "'right'",
+          "'left'"
+        ]
+      }
+    }
+  },
+  "ASK_TO_SEAT": {
+    "params": {},
+    "data": {
+      "keys": [
+        "input_text"
+      ],
+      "types": [
+        "<string>"
+      ]
+    }
+  },
+  "GREAT": {
+    "params": {},
+    "data": {
+      "keys": [
+        "input_text"
+      ],
+      "types": [
+        "<string>"
+      ]
+    }
+  },
+  "ASK_GUIDE": {
+    "params": {},
+    "data": {
+      "keys": [
+        "confirmation_text"
+      ],
+      "types": [
+        "<string>"
+      ]
+    }
+  },
+  "ROBOCUP_INFORMATION_2": {
+    "params": {},
+    "data": {
+      "keys": [
+        "input_text"
+      ],
+      "types": [
+        "<string>"
+      ]
+    }
+  },
+  "ROBOCUP_INFORMATION": {
+    "params": {},
+    "data": {
+      "keys": [
+        "input_text"
+      ],
+      "types": [
+        "<string>"
+      ]
+    }
+  },
+  "THANKS": {
+    "params": {},
+    "data": {
+      "keys": [
+        "input_text"
+      ],
+      "types": [
+        "<string>"
+      ]
+    }
+  },
+  "ANNOUNCE_NAV": {
+    "params": {},
+    "data": {
+      "keys": [
+        "input_text"
+      ],
+      "types": [
+        "<string>"
+      ]
+    }
+  },
+  "WAIT_DOOR_TO_OPEN": {
+    "params": {},
+    "data": {
+      "keys": [
+        "timeout"
+      ],
+      "types": [
+        "<int>"
+      ]
+    }
+  },
+  "STATE_ORDERS":{
+    "params":{},
+    "data":{
+      "keys":["orders"],
+      "types":["<start>"]
+    }
+  },
+  "ASK_NEXT_AV_DRINK":{
+    "params":{},
+    "data":{
+      "keys":["input_text"],
+      "types":["<string>"]
+    }
+  },
+  "ASK_NEW_ORDER":{
+    "params":{},
+    "data":{
+      "keys":["input_text"],
+      "types":["<string>"]
+    }
+  },
+  "COMPARE_NAMES": {
+    "params": {},
+    "data": {
+      "keys": [
+        "missing_order",
+        "avalaible_drinks",
+        "face_recognize_info"
+      ],
+      "types": [
+        "<order_array>",
+        "<avalaible_drinks>",
+        "<start>"
+      ],
+      "grammar": {
+        "<start>": [
+          "<order_array>",
+          "<avalaible_drinks>"
+        ],
+        "<order_array>": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "<avalaible_drinks>": [
+          "coca",
+          "bilz",
+          "pap",
+          "pepsi"
+        ]
+      }
+    }
+  }
 }
