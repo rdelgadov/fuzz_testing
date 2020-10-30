@@ -8,25 +8,26 @@ from smach.user_data import UserData
 from threading import Thread
 from datetime import datetime
 
-RE_NONTERMINAL = re.compile(r'(<[^<> ]*>)')
+RE_NONTERMINAL = re.compile(r"(<[^<> ]*>)")
 
 def srange(characters):
-    """Construct a list with all characterrs in the string"""
+    """Construct a list with all characterrs in the string. """
     return [c for c in characters]
 
 def crange(character_start, character_end):
+    """ Construct a list with all the caracters between two characters. """
     return [chr(i)
         for i in range(ord(character_start), ord(character_end) + 1)]
 
 def nonterminals(expansion):
-    # In later chapters, we allow expansions to be tuples,
-    # with the expansion being the first element
+    """ Extract all non terminal keys from expansion. """
     if isinstance(expansion, tuple):
         expansion = expansion[0]
 
     return re.findall(RE_NONTERMINAL, expansion)
 
 def data_to_userdata(data):
+    """ Create a UserData from dictionary. """
     userdata = UserData()
     for k in data.keys():
         userdata[k] = data[k]
@@ -38,12 +39,12 @@ class ExpansionError(Exception):
 class Fuzzer():
 
     start_symbol = "<start>"
-    characters = (string.ascii_lowercase + ' ')
+    characters = (string.ascii_lowercase + " ")
     grammar = {
             "<start>":["{<userdata>}"],
             "<userdata>":["<vars>,<userdata>","<vars>"],
             "<vars>":["<key>:<element>"],
-            "<key>":['<string>'],
+            "<key>":["<string>"],
             "<array>": ["<string_array>","<number_array>","<boolean_array>"],
             "<string_array>": ["[<string_elements>]"],
             "<number_array>": ["[<number_elements>]"],
@@ -61,13 +62,18 @@ class Fuzzer():
             "<number>": ["<int>","<float>"],
             "<int>":["<digit><int>","<digit>"],
             "<float>":["<int>.<int>"],
-            "<digit>": crange('1','9'),
-            "<string>": ['"' + "<characters>" + '"'],
+            "<digit>": crange("1","9"),
+            "<string>": ["'" + "<characters>" + "'"],
             "<characters>": ["<character><characters>","<character>"],
             "<character>": srange(characters)
         }
 
     def __init__(self, config = None):
+        """ Initialize a Fuzzer Object
+
+        Keywords arguments:
+        config -- A dictionary.
+        """
         self.config = config
         
     def simple_grammar_fuzzer(self, start_symbol=start_symbol,
@@ -78,6 +84,16 @@ class Fuzzer():
 
     def specific_grammar_fuzzer(self, grammar, start_symbol=start_symbol, 
             max_nonterminals=10, max_expansion_trials=1000, log=False):
+        """ Grammar-based fuzzing
+
+        Keywords arguments:
+        grammar -- Production rules of grammar, dictionary with non-terminal between "<" ">"
+            characters.
+        start_symbol -- Initial symbol to start the creation of data (default start_symbol)
+        max_nonterminal -- max number of no_terminals symbols to be created.
+        max_expansion_trials -- max number of trials to expand the expression.
+        log -- Flag to print or not information about the process.
+        """
         term = start_symbol
         expansion_trials = 0
 
@@ -90,7 +106,7 @@ class Fuzzer():
             if len(nonterminals(new_term)) < max_nonterminals:
                 term = new_term
                 if log:
-                    print("%-40s" % (symbol_to_expand + " -> " + expansion), term)
+                    print "%-40s" % (symbol_to_expand + " -> " + expansion) + str(term)
                 expansion_trials = 0
             else:
                 expansion_trials += 1
@@ -103,6 +119,13 @@ class Fuzzer():
             return term.encode("utf-8")
 
     def userdata_from_set(self, data, state = None, grammar = grammar):
+        """ UserData random generation.
+
+        Keywords arguments:
+        data -- A set of inputs_key that need the userdata.
+        state -- The name of state to be fuzzed. Used for get information from configuration.
+        grammar -- A specific grammar if the default is not enogh.
+        """
         userdata = UserData()
         log = {}
         for k in data:
@@ -113,9 +136,9 @@ class Fuzzer():
                     value = self.config[state]["data"]["types"][index]
                     if "grammar" in self.config[state]["data"]:
                         grammar = self.config[state]["data"]["grammar"] 
-            if 'list' in k:
+            if "list" in k:
                 value = "<array>"
-            elif 'text' in k:
+            elif "text" in k:
                 value = "<string>"
             userdata[k] = self.specific_grammar_fuzzer(grammar, value)
             log[k] = userdata[k]
@@ -128,6 +151,7 @@ class Fuzzer():
         return userdata, log
 
     def run_with_save_data(self, state, label):
+        """ Execute the state with is own information. Logs the pre and post conditions."""
         log = {}
         data, log["input_data"] = self.userdata_from_set(state._input_keys, state=label)
         log["pre_params"] = self.get_params()
@@ -137,40 +161,36 @@ class Fuzzer():
         except Exception as e:
             log["error"] = e.message
             rospy.loginfo(log["input_data"])
-            rospy.logerr('error: ' + e.message)
+            rospy.logerr("error: " + e.message)
         end = time.time()
         log["post_params"] = self.get_params()
         log["time"] = str(end-start)
         return log
 
-    def fuzz_params(self):
-        self.fuzz_param('reached', ('y','n'))
-        self.fuzz_param('is_moving', ('n','y'))
-        self.fuzz_param('hear', ('yes','no','algo'))
-        self.fuzz_param('num_faces', self.simple_grammar_fuzzer("<int_array>"))
-        self.fuzz_param('moved', ('y','n'))
-        self.fuzz_param('detected_faces', ('y','n'))
-        self.fuzz_param('saved_faces', ('y','n'))
-        self.fuzz_param('recognized_faces', ('y','n'))
-        self.fuzz_param('names',('name1','name2',['name1','name2']))
-        return map(lambda x: (x,rospy.get_param(x)),rospy.get_param_names())
-        #rospy.set_param('recognized_name','test_name')
-        #rospy.set_param('is_door_open','y')
-        #rospy.set_param('is_object_detected','y')
-        #rospy.set_param('object_detected','y')
+    # Used only in case of ros_params can be fuzzed.
 
+    def fuzz_params(self):
+        """ Used to generate the external inputs."""
+        for param in params:
+            self.fuzz_param(param,params[param])
+        return map(lambda x: (x,rospy.get_param(x)),rospy.get_param_names())
+    
     def fuzz_param(self, param, values):
+        """ Set a random value from options to a rosparam."""
         rospy.set_param(param, random.choice(values))
 
     def get_params(self):
+        """Obtain all values from ros params to be logged."""
         return map(lambda x: (x,rospy.get_param(x)),rospy.get_param_names())
 
-    def fuzz_ros_params(self):
-        while True:
-            self.fuzz_params()
+    def fuzz_ros_params(self, params):
+        """ Function called on a different thread to fuzz external inputs."""
+        while not rospy.is_shutdown():
+            self.fuzz_params(params)
             time.sleep(0.01)
 
-    def start_fuzzing_params(self):
-        worker = Thread(target=self.fuzz_ros_params)
+    def start_fuzzing_params(self, params):
+        """ Start the second thread to fuzz external inputs."""
+        worker = Thread(target=self.fuzz_ros_params, args=(params,))
         worker.setDaemon(True)
         worker.start()
