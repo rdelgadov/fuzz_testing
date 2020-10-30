@@ -51,9 +51,13 @@ if __name__ == "__main__":
     if not os.path.exists(report_path):
         os.makedirs(report_path)
         print "Directory " + dirName +  " Created" 
-    with open(config_path) as f:
-        config = json.load(f)
-    rospy.loginfo("Building Fuzzer with configuration.")
+    try:
+        with open(config_path) as f:
+            config = json.load(f)
+        rospy.loginfo("Building Fuzzer with configuration.")
+    except IOError:
+        config = None
+        rospy.loginfo("The configuration file does not exist. Working with empty dictionary.")
     
 
     fuzzer = Fuzzer(config)
