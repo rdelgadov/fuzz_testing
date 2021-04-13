@@ -69,7 +69,7 @@ The complete grammar is:
 {
   "<start>":["{<userdata>}"],
   "<userdata>":["<vars>,<userdata>","<vars>"],
-  "<vars>":["<key>:<element>"],
+  "<vars>":["<key>:<value>"],
   "<key>":["<string>"],
   "<array>": ["<string_array>","<number_array>","<boolean_array>"],
   "<string_array>": ["[<string_elements>]"],
